@@ -6,16 +6,16 @@
   <meta name="theme-color" content="#d18b9e">
   <meta name="description" content="Офлайн-тренажёр японских слов с интервальным повторением">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icon-192.png">
-  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" href="icon-192-v2.png">
+  <link rel="apple-touch-icon" href="icon-192-v2.png">
   <link rel="stylesheet" href="style.css">
-  <title>さくら漢字 — кандзи N5</title>
+  <title>かんじ</title>
 </head>
 <body>
   <header class="topbar">
     <div>
       <p class="eyebrow">Японский каждый день</p>
-      <h1>さくら漢字</h1>
+      <h1>かんじ</h1>
     </div>
     <button id="install-button" class="button ghost hidden" type="button">Установить</button>
   </header>
@@ -63,7 +63,7 @@
         <label class="field">Какие слова тренировать
           <select id="session-source"><option value="all">Все слова</option><option value="favorites">★ Только избранное</option></select>
         </label>
-        <label class="field">Набор<select id="kanji-pool"><option value="kanji">110 отдельных знаков</option><option value="all">Все 641 написание</option><option value="word">Слова с кандзи</option></select></label><label class="field">Размер занятия
+        <label class="field" id="kanji-pool-field">Набор<select id="kanji-pool"><option value="kanji">110 отдельных знаков</option><option value="all">Все 641 написание</option><option value="word">Слова с кандзи</option></select></label><label class="field">Размер занятия
           <select id="session-size"><option value="10">10 слов</option><option value="20" selected>20 слов</option><option value="30">30 слов</option><option value="999">Все доступные</option></select>
         </label>
       </div>
@@ -123,7 +123,7 @@
         <button id="reset-progress" class="button danger wide" type="button">Сбросить прогресс</button>
       </div>
       <div class="card"><strong>Работает без интернета</strong><p class="muted">После первого открытия приложение доступно офлайн. Прогресс хранится в этом браузере. Экспорт создаёт резервную копию.</p></div>
-    <div class="card source-note"><strong>Словарь · 641 написание</strong><p class="muted">Объединены Vocab_N5(1).pdf и JLPT_N5_110_sakura_fold_cards(2).pdf. Повторы написаний удалены, чтения и значения объединены. Записи только на кана исключены. Excel из старого чата недоступен; 元気 извлечено из PDF с переводом. Чтения отдельных знаков могут быть основами слов. Это учебные списки источников, не официальный перечень JLPT.</p><p class="muted">Интерфейс адаптирован из вашего Kotoba.</p></div></section>
+    </section>
   </main>
 
   <dialog id="add-word-dialog">
@@ -138,6 +138,6 @@
   </dialog>
 
   <div id="toast" class="toast hidden" role="status"></div>
-  <script src="data.js"></script><script src="app.js" defer></script>
+  <script src="data.js"></script><script src="categories.js"></script><script src="app.js" defer></script>
 </body>
 </html>

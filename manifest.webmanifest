@@ -1,20 +1,22 @@
 {
-  "name": "Sakura · Кандзи N5",
-  "short_name": "Кандзи N5",
+  "name": "かんじ",
+  "short_name": "かんじ",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#fae7eb",
   "theme_color": "#d18b9e",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "icon-192-v2.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "icon-512-v2.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "id": "./",

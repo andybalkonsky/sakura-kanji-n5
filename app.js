@@ -88,12 +88,19 @@ function renderWords() {
 
 function startSession(mode, sourceWords = null) {
   const size = Number($("#session-size").value);
-  const favoritesOnly = $("#session-source").value === "favorites";
-  let pool = sourceWords || (favoritesOnly ? allWords().filter(word => data.favorites.includes(word.id)) : dueWords());
-  if (!pool.length && !sourceWords && !favoritesOnly) pool = allWords();
-  if (!pool.length) { showToast("Сначала отметьте слова звёздочками"); return; }
-  const kind=$("#kanji-pool").value; pool=pool.filter(w=>kind==="all"||w.kind===kind); if(!pool.length){showToast("В этом наборе пока нет карточек. Выберите другой набор.");return;} const questions = shuffle(pool).slice(0, size);
-  currentSession = { mode, questions, index: 0, correct: 0, mistakes: [], answered: false };
+  const source = $("#session-source").value;
+  const category = CATEGORIES.find(item => item.id === source);
+  const kind = $("#kanji-pool").value;
+  let available = category ? allWords().filter(word => category.kanji.includes(word.japanese)) : allWords().filter(word => kind === "all" || word.kind === kind);
+  if (source === "favorites") available = available.filter(word => data.favorites.includes(word.id));
+  let pool = sourceWords || available;
+  if (!sourceWords && source === "all") {
+    const due = available.filter(word => progressFor(word.id).due <= dayStart());
+    if (due.length) pool = due;
+  }
+  if (!pool.length) { showToast(source === "favorites" ? "В этом наборе пока нет избранных слов" : "В этом наборе пока нет карточек"); return; }
+  const questions = shuffle(pool).slice(0, size);
+  currentSession = { mode, questions, optionPool: category ? available : null, index: 0, correct: 0, mistakes: [], answered: false };
   $("#mode-picker").classList.add("hidden");
   $("#session-result").classList.add("hidden");
   $("#quiz").classList.remove("hidden");
@@ -372,5 +379,13 @@ renderHome();
 
 function comparable(w){return new Set(w.russian.toLowerCase().replaceAll('ё','е').match(/[а-я]{3,}/g)?.map(x=>x.slice(0,5))||[])}
 function compatible(a,b){const t=comparable(a);return a.id!==b.id&&!a.kana.split('・').some(r=>b.kana.split('・').includes(r))&&![...comparable(b)].some(x=>t.has(x))}
-function chooseOptions(w){const out=[w];for(const c of shuffle(allWords().filter(x=>x.kind===w.kind))){if(out.every(x=>compatible(x,c)))out.push(c);if(out.length===4)break}return shuffle(out)}
+function chooseOptions(w){const out=[w];const preferred=currentSession?.optionPool || allWords().filter(x=>x.kind===w.kind);for(const c of [...shuffle(preferred),...shuffle(allWords())]){if(out.every(x=>compatible(x,c)))out.push(c);if(out.length===4)break}return shuffle(out)}
 $("#hint-button").addEventListener("click",()=>{if(!currentSession)return;const w=currentSession.questions[currentSession.index];const show=$("#quiz-reading").textContent==='';$("#quiz-reading").textContent=show?w.kana:'';$("#hint-button").textContent=show?'Скрыть чтение':'✧ Подсказка'});
+const themeOptions = document.createElement("optgroup");
+themeOptions.label = "По темам";
+CATEGORIES.forEach(category => { const option = document.createElement("option"); option.value = category.id; option.textContent = `${category.name} (${category.kanji.length})`; themeOptions.append(option); });
+$("#session-source").append(themeOptions);
+$("#session-source").addEventListener("change", () => {
+  const isCategory = CATEGORIES.some(category => category.id === $("#session-source").value);
+  $("#kanji-pool-field").classList.toggle("hidden", isCategory);
+});
