@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#d18b9e">
+  <meta name="description" content="Офлайн-тренажёр японских слов с интервальным повторением">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <title>さくら漢字 — кандзи N5</title>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Японский каждый день</p>
+      <h1>さくら漢字</h1>
+    </div>
+    <button id="install-button" class="button ghost hidden" type="button">Установить</button>
+  </header>
+
+  <main class="shell">
+    <nav class="tabs" aria-label="Разделы">
+      <button class="tab active" data-view="home" type="button">Главная</button>
+      <button class="tab" data-view="study" type="button">Учить</button>
+      <button class="tab" data-view="words" type="button">Слова</button>
+      <button class="tab" data-view="stats" type="button">Статистика</button>
+      <button class="tab" data-view="settings" type="button">Ещё</button>
+    </nav>
+
+    <section id="home-view" class="view active">
+      <div class="hero card">
+        <div>
+          <p class="eyebrow">Сегодня</p>
+          <h2 id="home-title">Готовы к занятию?</h2>
+          <p id="home-subtitle" class="muted"></p>
+        </div>
+        <div class="progress-ring" aria-label="Прогресс на сегодня">
+          <strong id="today-count">0</strong><span>/20</span>
+        </div>
+      </div>
+      <div class="metric-grid">
+        <article class="metric"><span>К повторению</span><strong id="due-count">0</strong></article>
+        <article class="metric"><span>Серия дней</span><strong id="streak-count">0</strong></article>
+        <article class="metric"><span>Точность</span><strong id="accuracy-count">—</strong></article>
+      </div>
+      <button class="button primary wide" data-start-mode="jp-ru" type="button">Начать занятие</button>
+      <div class="card tip">
+        <span class="tip-mark">あ</span>
+        <div><strong>Небольшие занятия работают лучше</strong><p class="muted">Повторяйте 10–20 карточек каждый день.</p></div>
+      </div>
+    </section>
+
+    <section id="study-view" class="view">
+      <div id="mode-picker">
+        <p class="eyebrow">Режим занятия</p>
+        <h2>Как будем повторять?</h2>
+        <div class="mode-grid">
+          <button class="mode-card" data-start-mode="jp-ru" type="button"><span>日 → Я</span><strong>Кандзи → русский</strong><small>Выберите перевод</small></button>
+          <button class="mode-card" data-start-mode="ru-jp" type="button"><span>Я → 日</span><strong>Русский → кандзи</strong><small>Выберите кандзи</small></button>
+        </div>
+        <label class="field">Какие слова тренировать
+          <select id="session-source"><option value="all">Все слова</option><option value="favorites">★ Только избранное</option></select>
+        </label>
+        <label class="field">Набор<select id="kanji-pool"><option value="kanji">110 отдельных знаков</option><option value="all">Все 641 написание</option><option value="word">Слова с кандзи</option></select></label><label class="field">Размер занятия
+          <select id="session-size"><option value="10">10 слов</option><option value="20" selected>20 слов</option><option value="30">30 слов</option><option value="999">Все доступные</option></select>
+        </label>
+      </div>
+
+      <div id="quiz" class="hidden">
+        <div class="quiz-head"><button id="close-quiz" class="icon-button" type="button" aria-label="Закрыть">×</button><div class="quiz-progress"><span id="quiz-progress-bar"></span></div><span id="quiz-counter"></span></div>
+        <article class="quiz-card">
+          <p id="quiz-direction" class="eyebrow"></p>
+          <h2 id="quiz-prompt"></h2>
+          <p id="quiz-reading" class="reading" lang="ja"></p><button id="hint-button" class="button secondary" type="button">✧ Подсказка</button>
+          <div id="quiz-options" class="options"></div>
+          <form id="typing-form" class="hidden">
+            <label class="field">Ответ хираганой<input id="typing-answer" autocomplete="off" autocapitalize="none" spellcheck="false" lang="ja" placeholder="Например: たべる"></label>
+            <button class="button primary wide" type="submit">Проверить</button>
+          </form>
+          <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+          <button id="next-question" class="button primary wide hidden" type="button">Дальше</button>
+        </article>
+      </div>
+
+      <div id="session-result" class="card result hidden">
+        <span class="result-mark">よくできました！</span>
+        <h2>Занятие завершено</h2>
+        <p id="result-summary" class="muted"></p>
+        <button id="repeat-mistakes" class="button secondary wide" type="button">Повторить ошибки</button>
+        <button id="finish-session" class="button primary wide" type="button">На главную</button>
+      </div>
+    </section>
+
+    <section id="words-view" class="view">
+      <div class="section-head"><div><p class="eyebrow">Словарь</p><h2><span id="word-count">641</span> написание</h2><p class="muted">★ <span id="favorites-count">0</span> в избранном</p></div><button id="show-add-word" class="button secondary" type="button">+ Добавить</button></div>
+      <label class="field">Показать
+        <select id="word-filter"><option value="all">Все слова</option><option value="favorites">★ Избранное</option></select>
+      </label>
+      <label class="search"><span>⌕</span><input id="word-search" type="search" placeholder="Найти слово или перевод"></label>
+      <div id="word-list" class="word-list"></div>
+    </section>
+
+    <section id="stats-view" class="view">
+      <p class="eyebrow">Прогресс</p><h2>Статистика</h2>
+      <div class="metric-grid">
+        <article class="metric"><span>Всего ответов</span><strong id="total-answers">0</strong></article>
+        <article class="metric"><span>Выучено</span><strong id="learned-count">0</strong></article>
+        <article class="metric"><span>Ошибок</span><strong id="mistake-count">0</strong></article>
+      </div>
+      <div class="card chart-card"><div class="section-head"><strong>Последние 7 дней</strong><span class="muted">ответы</span></div><div id="week-chart" class="week-chart"></div></div>
+      <div class="card chart-card"><strong>Самые проблемные слова</strong><div id="difficult-words" class="difficult-words"></div></div>
+      <div class="card"><div class="row"><span>Средняя точность</span><strong id="stats-accuracy">—</strong></div><div class="row"><span>Лучшая серия</span><strong id="best-streak">0 дней</strong></div><div class="row"><span>Слов на повторении</span><strong id="reviewing-count">0</strong></div></div>
+    </section>
+
+    <section id="settings-view" class="view">
+      <p class="eyebrow">Данные</p><h2>Настройки</h2>
+      <div class="card stack"><strong>Тема оформления</strong><div class="theme-options" role="group" aria-label="Тема оформления"><button class="theme-choice classic-choice" data-theme="classic" type="button" aria-pressed="true">Оригинальная</button><button class="theme-choice pink-choice" data-theme="pink" type="button" aria-pressed="false">Нежно-розовая</button></div></div>
+      <div class="card stack">
+        <button id="export-data" class="button secondary wide" type="button">Экспортировать прогресс</button>
+        <label class="button secondary wide file-button">Импортировать прогресс<input id="import-data" type="file" accept="application/json"></label>
+        <button id="reset-progress" class="button danger wide" type="button">Сбросить прогресс</button>
+      </div>
+      <div class="card"><strong>Работает без интернета</strong><p class="muted">После первого открытия приложение доступно офлайн. Прогресс хранится в этом браузере. Экспорт создаёт резервную копию.</p></div>
+    <div class="card source-note"><strong>Словарь · 641 написание</strong><p class="muted">Объединены Vocab_N5(1).pdf и JLPT_N5_110_sakura_fold_cards(2).pdf. Повторы написаний удалены, чтения и значения объединены. Записи только на кана исключены. Excel из старого чата недоступен; 元気 извлечено из PDF с переводом. Чтения отдельных знаков могут быть основами слов. Это учебные списки источников, не официальный перечень JLPT.</p><p class="muted">Интерфейс адаптирован из вашего Kotoba.</p></div></section>
+  </main>
+
+  <dialog id="add-word-dialog">
+    <form id="add-word-form" method="dialog">
+      <div class="section-head"><h2>Новое слово</h2><button id="close-dialog" class="icon-button" type="button">×</button></div>
+      <label class="field">Японское слово<input name="japanese" required></label>
+      <label class="field">Чтение хираганой<input name="kana" required></label>
+      
+      <label class="field">Перевод<input name="russian" required></label>
+      <button class="button primary wide" type="submit">Добавить</button>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+  <script src="data.js"></script><script src="app.js" defer></script>
+</body>
+</html>
